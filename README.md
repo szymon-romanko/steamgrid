@@ -1,3 +1,7 @@
+# Why did I forked this? #
+
+**SteamGrid** isn't maintained a lot so several interesting pull requests or solutions are not embedded in the official repository. I try to integrate them manually in this one to have a working version on the road :)
+
 # What is it? #
 
 **SteamGrid** is a standalone, fire-and-forget program to enhance Steam's grid view and Big Picture. It preloads the banner images for all your games (even non-Steam ones) and applies overlays depending on your categories.
@@ -7,15 +11,11 @@ again when you get more games or want to update the category overlays.
 
 # Download #
 
-[**steamgrid-windows.zip (4.4 MB)**](https://github.com/boppreh/steamgrid/releases/latest/download/steamgrid_windows.zip)
-
-[**steamgrid-linux.zip (4.5 MB)**](https://github.com/boppreh/steamgrid/releases/latest/download/steamgrid_linux.zip)
-
-[**steamgrid-mac.zip (4.6 MB)**](https://github.com/boppreh/steamgrid/releases/latest/download/steamgrid_mac.zip)
+TBD
 
 # How to use #
 
-1. Download the [latest version](https://github.com/boppreh/steamgrid/releases/latest) and extract the zip wherever.
+1. Compile the latest version based on this branch
 2. *(optional)* Name the overlays after your categories. So if you have a category “Games I Love”, put a nice little heart overlay there named `games i love.banner.png`. You can rename the defaults that came with the zip or get new ones at [/r/steamgrid](http://www.reddit.com/r/steamgrid/wiki/overlays).
     * Add the extension `.banner` before the image extension for banner art: `games i love.banner.png`
     * Add the extension `.cover` before the image extension for cover art: `games i love.cover.png`
