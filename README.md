@@ -2,6 +2,24 @@
 
 **SteamGrid** isn't maintained a lot so several interesting pull requests or solutions are not embedded in the official repository. I try to integrate them manually in this one to have a working version on the road :)
 
+
+# Steps to make go work on Steam deck #
+1. Open terminal
+2. wget https://go.dev/dl/go1.19.linux-amd64.tar.gz
+3. sudo tar -C /usr/local/ -xzf go1.19.linux-amd64.tar.gz
+4. cd /usr/local/
+5. echo $PATH
+6. sudo nano $HOME/.profile
+7. add : export PATH=$PATH:/usr/local/go/bin (sometimes you might want to force file modification)
+8. source $HOME/.profile
+9. cat $HOME/.profile
+10. check with go version
+
+# To compile the script
+1. In the chosen folder : git clone https://github.com/nithou/steamgrid
+2. cd steamgrid
+3. go build
+
 # What is it? #
 
 **SteamGrid** is a standalone, fire-and-forget program to enhance Steam's grid view and Big Picture. It preloads the banner images for all your games (even non-Steam ones) and applies overlays depending on your categories.
