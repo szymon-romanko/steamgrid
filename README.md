@@ -65,6 +65,7 @@ again when you get more games or want to update the category overlays.
     * *(optional)* Append `--skipCategory <category>` to skip processing of games assigned to a specific Steam category
     * *(optional)* Append `--steamgriddbonly` to search for artwork only in SteamGridDB
     * *(optional)* Append `--namefilter "<text>"` to process only games with names that contain provided *text*
+    * *(optional)* Append `--searchcustomgames` if you have non-steam games that have a page in the steam store
     * *(tip)* Run with `--help` to see all available options again.
 6. Read the report and open Steam in grid view to check the results.
 

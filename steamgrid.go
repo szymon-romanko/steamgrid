@@ -58,6 +58,7 @@ func startApplication() {
 	skipCategory := flag.String("skipcategory", "", "Name of the category with games to skip during processing")
 	steamgriddbonly := flag.Bool("steamgriddbonly", false, "Search for artwork only in SteamGridDB")
 	nameFilter := flag.String("namefilter", "", "Process only games with name that contains this value")
+	searchCustomGames := flag.Bool("searchcustomgames", false, "Try to find non-steam games on Steam Store using their game name")
 	flag.Parse()
 	if flag.NArg() == 1 {
 		steamDir = &flag.Args()[0]
@@ -177,6 +178,13 @@ func startApplication() {
 		for _, game := range games {
 			i++
 
+			if game.Custom && *searchCustomGames && game.Name != "" {
+				err := updateIdForCustomGames(game)
+				if err != nil {
+					fmt.Println("Error updating id for custom games: " + err.Error())
+				}
+			}
+
 			var name string
 			if game.Name == "" {
 				game.Name = getGameName(game.ID)
@@ -271,7 +279,7 @@ func startApplication() {
 					errorAndExit(err)
 				}
 
-				imagePath := filepath.Join(gridDir, game.ID+artStyleExtensions[0]+game.ImageExt)
+				imagePath := filepath.Join(gridDir, game.OriginalID+artStyleExtensions[0]+game.ImageExt)
 				err = ioutil.WriteFile(imagePath, game.OverlayImageBytes, 0666)
 
 				// Copy with legacy naming for Big Picture mode
