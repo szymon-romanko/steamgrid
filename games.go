@@ -32,6 +32,8 @@ type Game struct {
 	Custom bool
 	// LegacyID used in BigPicture
 	LegacyID uint64
+	// For steam games it's the same as ID, but for non-steam games it's the shortcut ID (in case ID get overwritten by updateIdForCustomGames)
+	OriginalID string
 }
 
 // Pattern of game declarations in the public profile. It's actually JSON
@@ -53,7 +55,7 @@ func addGamesFromProfile(user User, games map[string]*Game) (err error) {
 		gameID := groups[1]
 		gameName := groups[2]
 		tags := []string{""}
-		games[gameID] = &Game{gameID, gameName, tags, "", nil, nil, "", false, 0}
+		games[gameID] = &Game{gameID, gameName, tags, "", nil, nil, "", false, 0, gameID}
 	}
 
 	return
@@ -91,7 +93,7 @@ func addUnknownGames(user User, games map[string]*Game, skipCategory string) {
 				// If for some reason it wasn't included in the profile, create a new
 				// entry for it now. Unfortunately we don't have a name.
 				gameName := ""
-				games[gameID] = &Game{gameID, gameName, []string{tag}, "", nil, nil, "", false, 0}
+				games[gameID] = &Game{gameID, gameName, []string{tag}, "", nil, nil, "", false, 0, gameID}
 			}
 
 			if len(skipCategory) > 0 && strings.Contains(strings.ToLower(tag), strings.ToLower(skipCategory)) {
@@ -130,7 +132,7 @@ func addNonSteamGames(user User, games map[string]*Game, skipCategory string) {
 		uniqueName := bytes.Join([][]byte{target, gameName}, []byte(""))
 		LegacyID := uint64(crc32.ChecksumIEEE(uniqueName)) | 0x80000000
 
-		game := Game{gameID, string(gameName), []string{}, "", nil, nil, "", true, LegacyID}
+		game := Game{gameID, string(gameName), []string{}, "", nil, nil, "", true, LegacyID, gameID}
 		games[gameID] = &game
 
 		tagsText := gameGroups[4]
@@ -153,7 +155,7 @@ func GetGames(user User, nonSteamOnly bool, appIDs string, skipCategory string) 
 
 	if appIDs != "" {
 		for _, appID := range strings.Split(appIDs, ",") {
-			games[appID] = &Game{appID, "", []string{}, "", nil, nil, "", false, 0}
+			games[appID] = &Game{appID, "", []string{}, "", nil, nil, "", false, 0, appID}
 		}
 		return games
 	}
