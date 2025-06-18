@@ -49,6 +49,7 @@ local.properties
 [Dd]ebug/
 [Rr]elease/
 x64/
+out/
 build/
 [Bb]in/
 [Oo]bj/
@@ -215,7 +216,6 @@ pip-log.txt
 .mr.developer.cfg
 
 Steam
-steamgrid*
 __debug_bin
 
 # Intellij (and GoLand) files
