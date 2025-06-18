@@ -1,6 +1,6 @@
 // Automatically downloads and configures Steam grid images for all games in a
 // given Steam installation.
-package main
+package app
 
 import (
 	"bufio"
@@ -195,7 +195,7 @@ func startApplication() {
 			} else {
 				name = "unknown game with id " + game.ID
 			}
-			
+
 			if len(*nameFilter) > 0 && !strings.Contains(name, *nameFilter) {
 				continue
 			}
