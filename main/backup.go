@@ -136,8 +136,8 @@ func loadExisting(overridePath string, gridDir string, game *Game, artStyleExten
 
 				// remove overlay
 				game.OverlayImageBytes = nil
+			}
 		}
-	}
 
-}
+	}
 }

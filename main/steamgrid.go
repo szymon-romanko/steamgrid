@@ -195,7 +195,7 @@ func startApplication() {
 			} else {
 				name = "unknown game with id " + game.ID
 			}
-			
+
 			if len(*nameFilter) > 0 && !strings.Contains(name, *nameFilter) {
 				continue
 			}
