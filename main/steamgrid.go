@@ -1,6 +1,6 @@
 // Automatically downloads and configures Steam grid images for all games in a
 // given Steam installation.
-package app
+package main
 
 import (
 	"bufio"

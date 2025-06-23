@@ -5,12 +5,12 @@ WORKDIR /app
 RUN mkdir -p /out
 
 # download Go modules
-COPY app/go.mod app/go.sum ./
+COPY main/go.mod main/go.sum ./
 RUN --mount=type=cache,target=/root/.cache/go-build \
     go mod download
 
 # copy source code
-COPY app ./
+COPY main ./
 
 RUN --mount=type=cache,target=/root/.cache/go-build \
     go mod tidy
