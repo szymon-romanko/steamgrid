@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    name: Build multiple platforms
+    name: Build
     runs-on: ubuntu-latest
     permissions:
       contents: read
