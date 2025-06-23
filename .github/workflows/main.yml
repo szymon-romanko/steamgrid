@@ -1,0 +1,104 @@
+﻿name: Build and Publish Binaries
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  APP_NAME: steamgrid
+
+jobs:
+  build:
+    name: Build multiple platforms
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # permissions to upload docker build cache to ghcr
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup env variables  # from https://dev.to/hectorleiva/github-actions-and-creating-a-short-sha-hash-8b7
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          artifactName="${{ env.APP_NAME }}-binaries-$calculatedSha"
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=$artifactName" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build using docker
+        run: docker buildx bake default-with-registry-cache
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: out/*
+          if-no-files-found: error  # throw error if no files are found
+          retention-days: 1  # clear artifact after 1 day
+          compression-level: 0  # disable compression
+
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # permissions to create a release
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup env variables
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          artifactName="${{ env.APP_NAME }}-binaries-$calculatedSha"
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=$artifactName" >> $GITHUB_ENV
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: out
+
+      - name: Rename binaries
+        run: |
+          mkdir -p release &&
+          mv out/windows/binary release/${{ env.APP_NAME }}-${{ steps.tag_version.outputs.new_tag }}-windows-amd64.exe &&
+          mv out/linux/binary release/${{ env.APP_NAME }}-${{ steps.tag_version.outputs.new_tag }}-linux-amd64 &&
+          mv out/macos/darwin_amd64/binary release/${{ env.APP_NAME }}-${{ steps.tag_version.outputs.new_tag }}-macos-amd64 &&
+          mv out/macos/darwin_arm64/binary release/${{ env.APP_NAME }}-${{ steps.tag_version.outputs.new_tag }}-macos-arm64
+
+      - name: Create github release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: |
+            Auto-generated release for commit ${{ env.COMMIT_SHORT_SHA }}
+            Release notes:
+            
+            ${{ github.event.head_commit.message }}
+
+            ${{ steps.tag_version.outputs.changelog }}
+          preserve_order: true
+          fail_on_unmatched_files: true
+          make_latest: true
+          files: |
+            release/*
